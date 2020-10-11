@@ -30,7 +30,12 @@ app.get('/Hospital', middleware.checkToken, function(req, res) {
     .then(result=>  res.json(result));
     console.log('fetching details of Ventilator',da);
   });
-
+app.post("/searchhospital",middleware.checkToken,(req,res)=>{
+  var name=req.body.name;
+  console.log(name);
+  var hospitaldetail=db.collection("Hospital").find({"name":name}).toArray().then(result=>res.json(result));
+}
+);
 app.post('/searchventilators',middleware.checkToken, (req,res) =>{
       var status=req.body.status;
       console.log(status);
@@ -43,11 +48,16 @@ app.post('/searchventilatorn',middleware.checkToken,(req,res) => {
   var Ventilatordetails= db.collection('Ventilators')
   .find({"name":new RegExp(name,'i')}).toArray().then(result=>res.json(result));
 });
+app.post("/search",middleware.checkToken,(req,res)=>{
+  var status=req.body.status;
+  var name=req.body.name;
+  var hs=db.collection('Ventilators').find({"status":status,"name":name}).toArray().then(result=>res.json(result));
+});
 app.put('/update',middleware.checkToken,(req,res) => {
   var ventid={vId: req.body.vId};
   console.log(ventid);
   var newvalues={ $set :{ status:req.body.status}};
-  db.collections("Ventilators").updateOne(ventid,newvalues,function(err,result){
+  db.collection("Ventilators").updateOne(ventid,newvalues,function(err,result){
     res.json('1 document updated');
   });
 });
